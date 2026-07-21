@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Nagemaakte aanvalspagina</title>
+    <style>
+        body { font: 15px/1.5 Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+        code { background: #f0f2f4; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Nagemaakte aanvalspagina</h1>
+    <p>
+        Dit bestand doet alsof het een andere, kwaadaardige website is. Het probeert automatisch
+        een verwijderverzoek te sturen naar <code>delete.php</code> zodra je bent ingelogd op het
+        prikbord, zonder dat jij daar iets van merkt.
+    </p>
+    <p>
+        Omdat dit formulier geen geldig <code>csrf_token</code> kent (dat token staat alleen in
+        jouw sessie op de echte site, niet hier), reageert <code>delete.php</code> met
+        <strong>403 Forbidden</strong> in plaats van het bericht te verwijderen.
+    </p>
+
+    <!-- Dit is precies hoe een echte CSRF-aanval eruitziet: een verborgen formulier
+         dat zichzelf verstuurt zodra de pagina laadt. -->
+    <form id="forged" action="http://localhost/Oefenen/crud/csrf/simple/delete.php" method="post">
+        <input type="hidden" name="id" value="1">
+        <!-- Bewust GEEN csrf_token veld: de aanvaller kent het token niet. -->
+    </form>
+
+    <script>
+        document.getElementById('forged').submit();
+    </script>
+
+    <p><a href="index.php">Terug naar het prikbord</a></p>
+</body>
+</html>

